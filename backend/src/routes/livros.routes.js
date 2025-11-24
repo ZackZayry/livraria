@@ -3,7 +3,7 @@ const router = express.Router();
 const LivrosController = require("../controllers/livros.controller");
 const { requireAuth } = require('../middleware/auth');
 
-router.use(requireAuth);
+// router.use(requireAuth);
 
 const livrosController = new LivrosController();
 const { validarLivro, validarParamId } = require("../middleware/validar/livros.validar");
