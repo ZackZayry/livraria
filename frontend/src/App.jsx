@@ -15,22 +15,14 @@ function App() {
       <Router>
         <div className="app">
           <Header />
-
           <main className="main-content">
-
             <Routes>
-              {/* Rotas públicas */}
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
-
-              {/* Rotas privadas */}
               <Route path="/" element={<PrivateRoute><Home /></PrivateRoute>} />
               <Route path="/livros" element={<PrivateRoute><Livros /></PrivateRoute>} />
-
-              {/* Rotas inexistentes → manda para home */}
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
-
           </main>
         </div>
       </Router>
