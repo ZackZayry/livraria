@@ -1,19 +1,18 @@
-const { parse } = require("dotenv");
 const LivrosRepository = require("../repositories/livros.repository");
+
 class LivrosController {
     constructor() {
-        this.repository = new LivrosRepository();
+        this.livrosRepository = new LivrosRepository();
     }
 
     async listarLivros(req, res, next) {
-        const livros = await this.repository.findAll();
+        const livros = await this.livrosRepository.findAll();
         res.status(200).json(livros);
     }
 
     async buscarLivroPorId(req, res, next) {
         const id = parseInt(req.params.id);
-        const livro = await this.repository.findById(id);
-
+        const livro = await this.livrosRepository.findById(id);
         if (!livro) {
             return res.status(404).json({ erro: "Livro não encontrado" });
         }
@@ -21,17 +20,14 @@ class LivrosController {
     }
 
     async criarLivro(req, res, next) {
-        const { titulo, autor, categoria, ano, pag, editora} = req.body;
-
-        const novoLivro = await this.repository.create({
+        const { titulo, autor, categoria, ano, editora } = req.body;
+        const novoLivro = await this.livrosRepository.create({
             titulo,
             autor,
             categoria,
             ano: parseInt(ano),
-            pag: parseInt(pag),
             editora
         });
-
         res.status(201).json({
             mensagem: "Livro criado com sucesso",
             data: novoLivro
@@ -40,8 +36,14 @@ class LivrosController {
 
     async atualizarLivro(req, res, next) {
         const id = parseInt(req.params.id);
-        const dados = req.body;
-        const livroAtualizado = await this.repository.update(id, dados);
+        const { titulo, autor, categoria, ano, editora } = req.body;
+        const livroAtualizado = await this.livrosRepository.update(id, {
+            titulo,
+            autor,
+            categoria,
+            ano: parseInt(ano),
+            editora
+        });
 
         res.status(200).json({
             mensagem: "Livro atualizado com sucesso",
@@ -51,13 +53,14 @@ class LivrosController {
 
     async removerLivro(req, res, next) {
         const id = parseInt(req.params.id);
-        const livroRemovido = await this.repository.delete(id);
-
+        const livroRemovido = await this.livrosRepository.delete(id);
         res.status(200).json({
             mensagem: "Livro removido com sucesso",
             data: livroRemovido
         });
     }
+
+
 }
 
 module.exports = LivrosController;

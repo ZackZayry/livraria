@@ -1,13 +1,23 @@
 const app = require("./config/express");
-const routes = require("./routes");
+
+// Inicializa o banco de dados SQLite puro
 const db = require("./database/sqlite");
 db.init();
-const errorHandler = require("./middleware/errorHandler");
 
+// Todas as rotas da aplicação
+const routes = require("./routes");
+// Configura o middleware de tratamento de erros
+const errorHandler = require("./middlewares/errorHandler");
+
+// Configura as rotas
 app.use("/api", routes);
+
 app.use(errorHandler);
-app.use((req, res)=>{
-    res.status(404).json({ erro:"Endpoint não encontrado"})
+
+// Handler para rotas não encontradas (404)
+app.use((req, res) => {
+    res.status(404).json({ erro: "Endpoint não encontrado" });
 });
 
-module.exports =app;
+
+module.exports = app;

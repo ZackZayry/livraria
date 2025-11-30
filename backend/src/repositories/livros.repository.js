@@ -1,45 +1,56 @@
-const Livro = require("../models/livro.model");
-const fs = require("fs");
-const path = require("path");
 const RepositoryBase = require("./repository.interface");
 const db = require("../database/sqlite");
+const Livro = require("../models/livro.model");
 
-class LivrosRepository{
+class LivrosRepository extends RepositoryBase {
+    constructor() {
+        super();
+    }
+
     async findAll() {
-        const rows = await db.all("SELECT id, titulo, autor, categoria, ano, pag, editora FROM livros ORDER BY id ASC");
-        return rows.map(r => Livro.fromJSON(r));
+        const rows = db.all("SELECT id, titulo, autor, categoria, ano, editora FROM livros ORDER BY id ASC");
+        return rows.map(row => Livro.fromJSON(row));
     }
 
     async findById(id) {
-        const row = await db.get("SELECT id, titulo, autor, categoria, ano, pag, editora FROM livros WHERE id = ?", [id]);
+        const row = db.get("SELECT id, titulo, autor, categoria, ano, editora FROM livros WHERE id = ?", [id]);
         return row ? Livro.fromJSON(row) : null;
     }
 
-    async create(data) {
-        const novo = new Livro({ id: null, ...data });
-        const res = await db.run(
-            "INSERT INTO livros (titulo, autor, categoria, ano, pag, editora) VALUES (?, ?, ?, ?, ?, ?)",
-            [novo.titulo, novo.autor, novo.categoria, novo.ano, novo.pag, novo.editora]
+    async create(livroData) {
+        const novoLivro = new Livro({ id: null, ...livroData });
+        const result = db.run(
+            "INSERT INTO livros (titulo, autor, categoria, ano, editora) VALUES (?, ?, ?, ?, ?)",
+            [novoLivro.titulo, novoLivro.autor, novoLivro.categoria, novoLivro.ano, novoLivro.editora]
         );
-        return this.findById(res.id);
+        return this.findById(result.lastInsertRowid);
     }
 
-    async update(id, data) {
-        const atual = new Livro({id, ...data});
-        await db.run(
-            "UPDATE livros SET titulo = ?, autor = ?, categoria = ?, ano = ?, pag = ?, editora = ? WHERE id = ?",
-            [atual.titulo, atual.autor, atual.categoria, atual.ano, atual.pag, atual.editora, id]
+    async update(id, dadosAtualizados) {
+        const existente = await this.findById(id);
+        console.log(existente);
+
+        if (!existente) {
+            const error = new Error("Livro não encontrado");
+            error.statusCode = 404;
+            throw error;
+        }
+        const atualizado = new Livro({ ...existente.toJSON(), ...dadosAtualizados });
+        db.run(
+            "UPDATE livros SET titulo = ?, autor = ?, categoria = ?, ano = ?, editora = ? WHERE id = ?",
+            [atualizado.titulo, atualizado.autor, atualizado.categoria, atualizado.ano, atualizado.editora, id]
         );
         return this.findById(id);
     }
 
     async delete(id) {
-        const existente = await this.findById(id);
-        if(!existente){
-            const e = new Error("Livro não encontrado.");
-            e.status = 404; throw e;
+        const existente = this.findById(id);
+        if (!existente) {
+            const error = new Error("Livro não encontrado");
+            error.statusCode = 404;
+            throw error;
         }
-        await db.run("DELETE FROM livros WHERE id = ?", [id]);
+        db.run("DELETE FROM livros WHERE id = ?", [id]);
         return existente;
     }
 }
