@@ -50,3 +50,32 @@
   color: #666;
   font-size: 14px;
 }
+
+.dark {
+  background-color: #1e1e1e;
+  color: white;
+}
+
+.dark .header {
+  background-color: #333;
+}
+
+.dark .nav-link {
+  color: white;
+}
+
+.dark .nav-link:hover {
+  color: #00a6ff;
+}
+
+.dark .logo{
+  color: white;
+}
+
+.auth-card{
+  color: black;
+}
+
+.dark .livro-form-overlay{
+  color: black;
+}
