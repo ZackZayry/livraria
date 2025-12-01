@@ -1,3 +1,4 @@
+// Script para executar apenas a migração de adicionar editora aos livros
 const db = require('../src/database/sqlite');
 const migration = require('../migrations/003-add-editora-to-livros');
 

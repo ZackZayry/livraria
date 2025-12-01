@@ -1,3 +1,4 @@
+// migration simples: criar/dropar tabela livros usando sequelize
 module.exports = {
   up: async (sequelize, DataTypes) => {
     await sequelize.getQueryInterface().createTable('livros', {

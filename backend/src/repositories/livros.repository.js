@@ -1,3 +1,4 @@
+// src/repositories/livros.repository.js
 const RepositoryBase = require("./repository.interface");
 const db = require("../database/sqlite");
 const Livro = require("../models/livro.model");

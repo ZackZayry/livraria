@@ -1,3 +1,4 @@
+// Este middleware captura e trata todos os erros da aplicação
 const errorHandler = (err, req, res, next) => {
 
     // Determina o status code baseado no erro

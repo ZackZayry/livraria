@@ -1,3 +1,4 @@
+// Script para executar apenas a migração de adicionar email aos usuários
 const migration = require('../migrations/002-add-email-to-users');
 
 try {

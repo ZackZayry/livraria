@@ -1,3 +1,4 @@
+// src/repositories/repository.interface.js
 class RepositoryBase {
 
     constructor() {

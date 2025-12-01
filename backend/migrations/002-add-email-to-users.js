@@ -1,3 +1,4 @@
+// migrations/002-add-email-to-users.js
 const db = require('../src/database/sqlite');
 
 function up() {

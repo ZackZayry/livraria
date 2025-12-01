@@ -1,3 +1,4 @@
+// src/models/livro.model.js
 class Livro {
     constructor({ id = null, titulo, autor, categoria, ano, editora = '' }) {
         this.id = id !== undefined ? id : null;

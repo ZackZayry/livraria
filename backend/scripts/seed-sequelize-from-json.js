@@ -1,3 +1,8 @@
+/*
+ Script de seed que popula a tabela 'livros' usando Sequelize e o modelo definido.
+ Uso: node scripts/seed-sequelize-from-json.js
+*/
+
 const path = require('path');
 const fs = require('fs');
 

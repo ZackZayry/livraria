@@ -1,3 +1,4 @@
+// Definição do modelo Sequelize para 'Livro'
 module.exports = (sequelize, DataTypes) => {
   const Livro = sequelize.define('Livro', {
     id: {
