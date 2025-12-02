@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { livrosService } from '../services/livrosService';
 import LivroCard from '../components/LivroCard';
+import { favoritesService } from '../services/favoritesService';
 import LivroForm from '../components/LivroForm';
 import './Livros.css';
 
@@ -11,9 +12,12 @@ const Livros = () => {
   const [showForm, setShowForm] = useState(false);
   const [editingLivro, setEditingLivro] = useState(null);
   const [successMessage, setSuccessMessage] = useState('');
+  const [favorites, setFavorites] = useState([]);
+  const [showOnlyFavorites, setShowOnlyFavorites] = useState(false);
 
   useEffect(() => {
     carregarLivros();
+    carregarFavoritos();
   }, []);
 
   const carregarLivros = async () => {
@@ -21,7 +25,9 @@ const Livros = () => {
       setLoading(true);
       setError('');
       const data = await livrosService.listar();
+      const favData = await favoritesService.list();
       setLivros(data);
+      setFavorites(favData.map(f => f.id)); 
     } catch (err) {
       setError('Erro ao carregar livros.');
       console.error(err);
@@ -87,6 +93,30 @@ const Livros = () => {
     return <div className="loading">Carregando livros...</div>;
   }
 
+
+  async function carregarFavoritos() {
+    try {
+      const favs = await favoritesService.list();
+      setFavorites(favs.map(f => f.id));
+    } catch (err) {
+      console.error('Erro ao carregar favoritos', err);
+    }
+  }
+
+   async function handleToggleFavorite(bookId) {
+    if (favorites.includes(bookId)) {
+      await favoritesService.remove(bookId);
+      setFavorites(prev => prev.filter(id => id !== bookId));
+    } else {
+      await favoritesService.add(bookId);
+      setFavorites(prev => [...prev, bookId]);
+    }
+  }
+
+  const filteredBooks = showOnlyFavorites
+    ? livros.filter(l => favorites.includes(l.id))
+    : livros;
+
   return (
     <div className="container">
       <div className="livros-header">
@@ -94,6 +124,21 @@ const Livros = () => {
         <button onClick={handleCreate} className="btn btn-primary">
           ➕ Adicionar Livro
         </button>
+        <button
+          onClick={() => setShowOnlyFavorites(!showOnlyFavorites)}
+          style={{
+            padding: "10px 20px",
+            marginBottom: "20px",
+            cursor: "pointer",
+            borderRadius: "8px",
+            border: "none",
+            backgroundColor: showOnlyFavorites ? "#ff4081" : "#1976d2",
+            color: "white",
+            transition: "0.3s"
+          }}
+        >
+          {showOnlyFavorites ? "Mostrar Todos" : "Mostrar Apenas Favoritos"}
+      </button>
       </div>
 
       {successMessage && (
@@ -112,15 +157,15 @@ const Livros = () => {
           </button>
         </div>
       ) : (
-        <div className="livros-grid">
-          {livros.map((livro) => (
-            <LivroCard
-              key={livro.id}
-              livro={livro}
-              onEdit={handleEdit}
-              onDelete={handleDelete}
-            />
-          ))}
+        <div className="livros-grid" style={{ display: "flex", flexWrap: "wrap", gap: "20px" }}>
+          {filteredBooks.map(livro => (
+          <LivroCard
+            key={livro.id}
+            livro={livro}
+            isFavorite={favorites.includes(livro.id)}
+            onToggleFavorite={() => handleToggleFavorite(livro.id)}
+          />
+        ))}
         </div>
       )}
 

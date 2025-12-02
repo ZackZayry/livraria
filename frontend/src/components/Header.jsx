@@ -7,7 +7,6 @@ const Header = () => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
 
-  // Estado do tema
   const [darkMode, setDarkMode] = useState(false);
 
   const toggleTema = () => {
