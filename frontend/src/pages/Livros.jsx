@@ -162,6 +162,8 @@ const Livros = () => {
           <LivroCard
             key={livro.id}
             livro={livro}
+            onEdit={handleEdit}
+            onDelete={handleDelete}
             isFavorite={favorites.includes(livro.id)}
             onToggleFavorite={() => handleToggleFavorite(livro.id)}
           />
